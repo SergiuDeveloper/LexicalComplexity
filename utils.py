@@ -4,6 +4,7 @@ from gensim.models import FastText
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pandas as pd
+import math
 import re
 
 
@@ -46,11 +47,11 @@ def compute_word_complexity(model, train_df, word):
     word = word.lower()
 
     complexity = 0
-    total_similarities_sum = sum([model.wv.similarity(word, train_word) for train_word in model.wv.vocab.keys()])
+    total_similarities_sum = sum([math.fabs(model.wv.similarity(word, train_word)) for train_word in model.wv.vocab.keys()])
     for train_word in train_df['token']:
         train_word = str(train_word)
 
-        similarity = model.wv.similarity(word, train_word.lower())
+        similarity = math.fabs(model.wv.similarity(word, train_word.lower()))
         scaled_similarity = similarity / total_similarities_sum
 
         train_word_complexity_entries = train_df[train_df['token'] == train_word]['complexity']
